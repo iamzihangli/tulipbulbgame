@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Investor — Tulip Bulb Game v2</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <main class="game">
+        <header class="hero">
+            <h1 id="hero-title">🌷 Tulip Mania <span class="version">v2</span></h1>
+            <p class="tagline" id="hero-tagline">Amsterdam, 1634. Bulbs sell for $5 apiece. The market is calm — for now.</p>
+            <p class="rules">
+                You start with <strong>$1,000</strong> cash and <strong>0 units</strong>. Each season you may buy, sell, or hold.
+                The game lasts at least 10 seasons and may end at any season after that.
+                Try to end with more money than you started.
+            </p>
+            <p class="note" id="hero-note">
+                <strong>Note:</strong> a grower will tell you the <em>true value</em> of a single tulip bulb is about <strong>$10</strong>.
+                Any price above that is speculation.
+            </p>
+
+            <div class="scenario-picker">
+                <label for="scenario-select">Bubble:</label>
+                <select id="scenario-select">
+                    <option value="random">🎲 Random</option>
+                    <option value="tulip" selected>🌷 Tulip Mania — Amsterdam, 1637</option>
+                    <option value="south_sea">⚓ South Sea Bubble — London, 1720</option>
+                    <option value="florida_land">🏝️ Florida Land Boom — Miami, 1926</option>
+                    <option value="dotcom">💻 Dot-com Bubble — NASDAQ, 2000</option>
+                    <option value="crypto">🪙 Crypto Mania — 2021</option>
+                </select>
+            </div>
+        </header>
+
+        <section class="play" id="play-screen">
+            <div class="stats">
+                <div class="stat"><span class="label">Season</span><span class="value" id="stat-round">1</span></div>
+                <div class="stat"><span class="label" id="stat-price-label">Price</span><span class="value" id="stat-price">$5.00</span></div>
+                <div class="stat"><span class="label">Cash</span><span class="value" id="stat-cash">$1,000.00</span></div>
+                <div class="stat"><span class="label" id="stat-held-label">Units</span><span class="value" id="stat-bulbs">0</span></div>
+                <div class="stat highlight"><span class="label">Portfolio</span><span class="value" id="stat-portfolio">$1,000.00</span></div>
+            </div>
+
+            <div class="chart-wrap">
+                <p class="chart-caption">Market price · Your portfolio · Cash + inflation (all indexed to Season 1 = 100)</p>
+                <canvas id="chart"></canvas>
+            </div>
+
+            <div class="actions" id="actions">
+                <label class="qty-label">
+                    Quantity
+                    <input type="number" id="qty" min="1" step="1" value="200">
+                    <span class="hint" id="qty-hint">Max buy: 200 · Max sell: 0</span>
+                </label>
+                <div class="buttons">
+                    <button id="btn-buy" class="btn btn-buy">Buy</button>
+                    <button id="btn-sell" class="btn btn-sell">Sell</button>
+                    <button id="btn-hold" class="btn btn-hold">Hold</button>
+                </div>
+            </div>
+
+            <div class="log-wrap">
+                <h3>Decisions</h3>
+                <ul id="log" class="log"></ul>
+            </div>
+        </section>
+
+        <section class="debrief hidden" id="debrief-screen">
+            <details class="collapsible-block performance-collapsible" id="performance-block" open>
+                <summary class="collapsible-summary">
+                    <span class="collapsible-title" id="debrief-title">The bubble has burst.</span>
+                </summary>
+                <div class="collapsible-content">
+                    <p id="debrief-summary"></p>
+                    <div class="debrief-grid" id="debrief-stats"></div>
+                </div>
+            </details>
+
+            <div class="history-panel" id="history-panel">
+                <h3 id="history-title">Historical Context</h3>
+                <ul id="history-facts" class="history-facts"></ul>
+                <p class="history-link"><a id="history-link" href="#" target="_blank" rel="noopener">Read more →</a></p>
+            </div>
+
+            <details class="collapsible-block ai-collapsible" id="ai-block">
+                <summary class="collapsible-summary">
+                    <span class="collapsible-title">🤖 And today, 2025–2026…</span>
+                </summary>
+                <div class="collapsible-content">
+                    <p class="ai-intro" id="ai-intro"></p>
+                    <ul id="ai-bullets" class="ai-bullets"></ul>
+                    <div class="nvda-chart-wrap">
+                        <p class="nvda-caption">NVIDIA share price — approximate quarterly close, USD (split-adjusted)</p>
+                        <canvas id="nvda-chart"></canvas>
+                    </div>
+                    <p class="reflection-q" id="reflection-q"></p>
+                </div>
+            </details>
+
+            <div class="fvpv-panel hidden" id="fvpv-panel"></div>
+
+            <div class="debrief-buttons">
+                <button id="btn-fvpv" class="btn btn-fvpv">Show FV / PV breakdown</button>
+                <button id="btn-replay" class="btn btn-replay">Play again</button>
+                <button id="btn-print" class="btn btn-print">Print my game</button>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <a href="../index.html">← back to v1</a>
+        </footer>
+    </main>
+
+    <!-- FLOATING FEEDBACK BUTTON -->
+    <button class="feedback-btn" id="feedback-btn" type="button" aria-label="Send feedback">
+        <span class="feedback-btn-icon" aria-hidden="true">✉</span>
+        <span class="feedback-btn-text">Feedback</span>
+    </button>
+
+    <!-- FEEDBACK MODAL -->
+    <div class="feedback-modal" id="feedback-modal" role="dialog" aria-labelledby="feedback-title" aria-modal="true" hidden>
+        <div class="feedback-backdrop" id="feedback-backdrop"></div>
+        <div class="feedback-card">
+            <button class="feedback-close" id="feedback-close" type="button" aria-label="Close feedback">✕</button>
+            <h2 id="feedback-title">Send feedback</h2>
+            <p class="feedback-sub">Bugs, ideas, confusing parts &mdash; anything goes. Goes straight to the instructor.</p>
+
+            <fieldset class="feedback-cat">
+                <legend>Type</legend>
+                <label><input type="radio" name="feedback-type" value="bug" checked> Bug</label>
+                <label><input type="radio" name="feedback-type" value="suggestion"> Suggestion</label>
+                <label><input type="radio" name="feedback-type" value="confused"> Confused by something</label>
+                <label><input type="radio" name="feedback-type" value="praise"> What worked</label>
+                <label><input type="radio" name="feedback-type" value="other"> Other</label>
+            </fieldset>
+
+            <label class="feedback-label" for="feedback-text">What's on your mind?</label>
+            <textarea id="feedback-text" rows="6" placeholder="Describe the issue, idea, or question…"></textarea>
+
+            <details class="feedback-context">
+                <summary>Auto-included context (helps me reproduce)</summary>
+                <pre id="feedback-context-text"></pre>
+            </details>
+
+            <div class="feedback-actions">
+                <button class="btn feedback-action-btn" id="feedback-copy" type="button">Copy to clipboard</button>
+                <button class="btn feedback-action-btn" id="feedback-cancel" type="button">Cancel</button>
+                <button class="btn feedback-action-btn feedback-action-primary" id="feedback-send" type="button">Send via email</button>
+            </div>
+            <p class="feedback-hint">Send opens your email app pre-filled. No email client? Use <em>Copy to clipboard</em> and paste into a message to <a id="feedback-email-link" href="#">the instructor</a>.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
