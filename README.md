@@ -4,8 +4,8 @@ An investment game built around the historical Tulip Mania bubble (Amsterdam, 16
 
 ## Versions
 
-- **v1** — [`index.html`](./index.html): the original proof-of-concept. 10 fixed rounds, hardcoded price path, single Hold/Sell decision.
-- **v2** — [`v2/index.html`](./v2/index.html): rewritten with full Buy/Sell/Hold trading at any quantity, a randomized 10–15-round hidden horizon, and a tulip-mania-shaped price path (slow rise → mania → crash → small plateau). Includes a debrief comparing your run against "sold at peak", "held to end", and "never invested" counterfactuals.
+- **v2 (default)** — [`index.html`](./index.html): full Buy/Sell/Hold trading at any quantity, a randomized 10–15-season hidden horizon, a tulip-mania-shaped price path (flat → spike → rise → peak → mild & steep decline → crash → wipeout floor), five historical bubble scenarios (Tulip Mania, South Sea, Florida Land, Dot-com, Crypto), 5%/season inflation with an indexed comparison chart, an inflation-adjusted FV vs PV breakdown, and an AI-bubble closing reflection.
+- **v1** — [`v1/index.html`](./v1/index.html): the original proof-of-concept. 10 fixed rounds, hardcoded price path, single Hold/Sell decision.
 
 ## Running
 
